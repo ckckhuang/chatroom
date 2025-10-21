@@ -1,27 +1,15 @@
-<!doctype html>
-<html lang="zh-TW">
-<head>
-  <meta charset="utf-8">
-  <title>無內容討論區登入</title>
-  <style>
-    body{font-family:"Microsoft JhengHei",sans-serif;background:#f2f4f8;margin:0;height:100vh;display:flex;align-items:center;justify-content:center}
-    .box{background:white;padding:24px;border-radius:8px;box-shadow:0 6px 20px rgba(0,0,0,0.08);width:320px}
-    input{width:100%;padding:8px;margin:6px 0;border:1px solid #ccc;border-radius:4px}
-    button{width:100%;padding:8px;background:#0078d4;color:white;border:none;border-radius:4px;cursor:pointer}
-    a{color:#0078d4;text-decoration:none;font-size:14px}
-    .error{color:#c0392b;margin-top:8px;font-size:14px}
-  </style>
-</head>
+
+<!DOCTYPE html>
+<html>
+<head><title>Login</title></head>
 <body>
-  <div class="box">
-    <h3 style="margin:0 0 8px 0">無內容討論區登入</h3>
-    <form method="post">
-      <input name="username" placeholder="帳號" required>
-      <input name="password" type="password" placeholder="密碼" required>
-      <button type="submit">登入</button>
-    </form>
-    <p style="margin-top:10px;text-align:center">還沒有帳號？ <a href="/register">註冊</a></p>
-    {% if error %}<div class="error">{{ error }}</div>{% endif %}
-  </div>
+<h1>Login</h1>
+<form method="POST">
+    Username: <input name="username"><br>
+    Password: <input name="password" type="password"><br>
+    <button type="submit">Login</button>
+</form>
+<p style="color:red;">{{ error }}</p>
+<a href="/register">Register</a>
 </body>
 </html>
