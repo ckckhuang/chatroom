@@ -83,49 +83,49 @@
     socket.on('load_history', (messages) => {
       const chat = document.getElementById('chat');
       chat.innerHTML = '';
-      messages.forEach(m => addMessage(m.id, m.username, m.message, m.reply_to_id, m.username === username));
+      messages.forEach(m => addMessage(m, m.username === username));
     });
 
     socket.on('receive_message', (m) => {
-      addMessage(m.id, m.username, m.message, m.reply_to_id, m.username === username);
+      addMessage(m, m.username === username);
       if (!isPageVisible) showNotification();
     });
 
-    function addMessage(id, user, msg, reply_to_id, isSelf) {
+    function addMessage(m, isSelf) {
       const chat = document.getElementById('chat');
       const container = document.createElement('div');
       container.classList.add('message-container', isSelf ? 'my-message' : 'other-message');
-      container.dataset.id = id;
+      container.dataset.id = m.id;
 
       const usernameDiv = document.createElement('div');
       usernameDiv.classList.add('username');
-      usernameDiv.textContent = user;
+      usernameDiv.textContent = m.username;
 
-      if (reply_to_id) {
+      if (m.reply_to_id) {
         const replyPreview = document.createElement('div');
         replyPreview.classList.add('reply-preview');
-        const original = document.querySelector(`.message-container[data-id='${reply_to_id}'] .bubble`);
-        const originalUser = document.querySelector(`.message-container[data-id='${reply_to_id}'] .username`);
+        const original = document.querySelector(`.message-container[data-id='${m.reply_to_id}'] .bubble`);
+        const originalUser = document.querySelector(`.message-container[data-id='${m.reply_to_id}'] .username`);
         replyPreview.textContent = original && originalUser ? `回覆 ${originalUser.textContent}: ${original.textContent}` : '';
         container.appendChild(replyPreview);
       }
 
       const bubbleDiv = document.createElement('div');
       bubbleDiv.classList.add('bubble');
-      bubbleDiv.textContent = msg;
+      bubbleDiv.textContent = m.message;
 
       const metaDiv = document.createElement('div');
       metaDiv.classList.add('meta');
 
       const timeSpan = document.createElement('span');
-      timeSpan.textContent = new Date().toLocaleTimeString();
+      timeSpan.textContent = new Date(m.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
       const replyBtn = document.createElement('button');
       replyBtn.classList.add('reply-button');
       replyBtn.textContent = '回覆';
       replyBtn.onclick = () => {
-        replyToId = id;
-        document.getElementById('message').placeholder = `回覆: ${msg}`;
+        replyToId = m.id;
+        document.getElementById('message').placeholder = `回覆: ${m.message}`;
         document.getElementById('message').focus();
       };
 
@@ -144,7 +144,7 @@
       const messageInput = document.getElementById('message');
       const message = messageInput.value.trim();
       if (!message) return;
-      socket.emit('send_message', { username: username, message: message, reply_to_id: replyToId });
+      socket.emit('send_message', { message: message, reply_to_id: replyToId });
       messageInput.value = '';
       messageInput.placeholder = '輸入訊息...';
       replyToId = null;
